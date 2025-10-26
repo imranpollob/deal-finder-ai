@@ -61,7 +61,6 @@ coverage.xml
 
 # Environment variables
 .env
-.env.*
 
 # Model files
 *.pkl
