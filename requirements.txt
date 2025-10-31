@@ -1,38 +1,56 @@
+# Core dependencies
 python-dotenv
-ipykernel
-ipywidgets
 requests
 numpy
 pandas
 scipy
-scikit-learn
-matplotlib
+
+# Machine Learning & AI
 torch
 transformers
-tqdm
+scikit-learn
+sentence_transformers
+datasets==3.6.0
+
+# LLM APIs
 openai
-gradio
+google-generativeai
+anthropic
+ollama
+
+# LangChain ecosystem
 langchain
 langchain-core
 langchain-text-splitters
 langchain-openai
 langchain-chroma
 langchain-community
-datasets==3.6.0
-matplotlib
-google-generativeai
-anthropic
+
+# Vector Database
 chromadb
-plotly
-jupyter-dash
+protobuf==3.20.2
+
+# Web scraping & parsing
 beautifulsoup4
-pydub
+feedparser
+
+# UI & Visualization
+gradio
+matplotlib
+plotly
+ipywidgets
+jupyter-dash
+
+# Deployment & Cloud
 modal
-ollama
+
+# Utilities
+tqdm
 psutil
 setuptools
 speedtest-cli
-sentence_transformers
-feedparser
-protobuf==3.20.2
+pydub
 wandb
+
+# Development tools
+ipykernel

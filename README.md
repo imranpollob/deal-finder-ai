@@ -76,34 +76,124 @@ deals_finder/
 ---
 
 ## Setup Instructions
-1. **Create and activate a virtual environment:**
+
+### Prerequisites
+- Python 3.8 or higher
+- pip package manager
+- Virtual environment (recommended)
+
+### Step 1: Create Virtual Environment
+```sh
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
+
+### Step 2: Install Dependencies
+```sh
+pip install -r requirements.txt
+```
+
+**Note:** The installation includes several heavy packages (PyTorch, Transformers, ChromaDB). This may take several minutes.
+
+### Step 3: Set Up Environment Variables
+1. Copy the example environment file:
    ```sh
-   python3 -m venv .venv
-   source .venv/bin/activate
+   cp .env.example .env
    ```
-2. **Install dependencies:**
-   ```sh
-   pip install -r requirements.txt
-   ```
-3. **Set up environment variables:**
-   - Copy `.env.example` to `.env` and fill in your API keys (OpenAI, Pushover, Twilio, etc.)
-4. **Download or train required model files:**
-   - Place `ensemble_model.pkl` and `random_forest_model.pkl` in the project root if not already present.
-5. **Run the app:**
-   ```sh
-   python price_is_right_final.py
-   ```
+
+2. Edit `.env` and replace the placeholder values with your actual API keys.
+
+   The `.env.example` file contains all available configuration options with helpful comments. Here's what you need:
+
+   **Required (Minimum Setup):**
+   - `OPENAI_API_KEY` - Get from [OpenAI Platform](https://platform.openai.com/api-keys)
+
+   **Highly Recommended (Choose one for notifications):**
+   - `PUSHOVER_USER` & `PUSHOVER_TOKEN` - Get from [Pushover](https://pushover.net/) (recommended)
+   - `TWILIO_*` variables - For SMS notifications via [Twilio](https://www.twilio.com/)
+
+   **Optional (Enhanced Features):**
+   - `MODAL_TOKEN` - For the fine-tuned Specialist agent
+   - `DEEPSEEK_API_KEY` - Alternative to OpenAI for cost savings
+
+   See the `.env.example` file for the complete list with detailed comments and links.
+
+### Step 4: Set Up Required Model Files
+You need two pre-trained model files in your project root:
+- `ensemble_model.pkl` - Linear regression ensemble model
+- `random_forest_model.pkl` - Random forest price predictor
+
+**Options:**
+- Train these models yourself using your own product dataset
+- Contact the project maintainer for pre-trained models
+- Modify `agents/ensemble_agent.py` to handle missing models gracefully
+
+### Step 5: Configure Vector Database (Automatic)
+The ChromaDB vector database will be created automatically in `products_vectorstore/` when you first run the application. The database is used by the FrontierAgent for RAG-based price estimation.
+
+### Step 6: (Optional) Deploy Specialist Agent to Modal
+If you want to use the fine-tuned SpecialistAgent:
+1. Train and deploy your fine-tuned LLM to Modal as "pricer-service"
+2. Ensure the deployment name matches: `modal.Cls.from_name("pricer-service", "Pricer")`
+3. Set your `MODAL_TOKEN` in `.env`
+
+**Note:** The system will work without the Specialist agent - the ensemble will use the other two agents.
+
+### Step 7: Run the Application
+```sh
+python price_is_right_final.py
+```
+
+The Gradio web interface will launch automatically. By default it runs on `http://localhost:7860`.
+
+**What happens when you run:**
+- 🔍 Scans for deals every 5 minutes (configurable)
+- 📊 Displays found deals in an interactive table
+- 📝 Shows live logs of agent activity
+- 📈 Visualizes product embeddings in 3D space
+- 🔔 Sends notifications for deals with $50+ discount
+
+### Troubleshooting
+
+**ImportError for transformers/torch:**
+```sh
+pip install --upgrade torch transformers
+```
+
+**ChromaDB issues:**
+```sh
+pip install --upgrade chromadb protobuf==3.20.2
+```
+
+**OpenAI API errors:**
+- Verify your API key is correct in `.env`
+- Check you have available credits at [OpenAI Platform](https://platform.openai.com/usage)
+
+**No deals found:**
+- Check RSS feeds are accessible
+- Verify OpenAI API is working
+- Review logs in the Gradio UI for errors
 
 ---
 
 ## Environment Variables
-See `.env.example` for all required variables. Example:
-```
-OPENAI_API_KEY=your-openai-key
-PUSHOVER_USER=your-pushover-user
-PUSHOVER_TOKEN=your-pushover-token
-# ...other keys as needed
-```
+
+The `.env.example` file contains all available configuration options with detailed comments and setup instructions. 
+
+**Quick Reference:**
+
+### Required
+- `OPENAI_API_KEY` - OpenAI API key for GPT-4o-mini
+
+### Notifications (Choose at least one)
+- `PUSHOVER_USER` & `PUSHOVER_TOKEN` - Pushover push notifications (recommended)
+- `TWILIO_*` - SMS notifications via Twilio (alternative)
+
+### Optional (Enhanced Features)
+- `MODAL_TOKEN` - For fine-tuned Specialist agent deployment
+- `DEEPSEEK_API_KEY` - Alternative LLM provider for cost savings
+
+**Setup:** Copy `.env.example` to `.env` and fill in your actual API keys. The example file includes helpful links and instructions for obtaining each key.
 
 ---
 
